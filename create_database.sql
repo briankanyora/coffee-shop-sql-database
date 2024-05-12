@@ -185,3 +185,151 @@ REFERENCES shops(shop_id),
 ADD CONSTRAINT fk_country_id
 FOREIGN KEY (country_id) 
 REFERENCES countries(country_id);
+/*
+Received Error:
+
+ERROR:  Failing row contains (null, 1, 1, 1).null value in column "shoplocation_id" of relation "shop_location" violates not-null constraint 
+
+ERROR:  null value in column "shoplocation_id" of relation "shop_location" violates not-null constraint
+SQL state: 23502
+Detail: Failing row contains (null, 1, 1, 1).
+
+
+Understanding of the issue:
+issue with the shoplocation_id column being set as NOT NULL but not being automatically populated due 
+to its SERIAL data type. Let's adjust the shoplocation_id column to use the SERIAL type properly:
+
+
+Solution:
+Below
+*/
+
+
+-- Drop the existing shoplocation_id column
+ALTER TABLE shop_location DROP COLUMN shoplocation_id;
+
+-- Add a new shoplocation_id column as SERIAL
+ALTER TABLE shop_location ADD COLUMN shoplocation_id SERIAL PRIMARY KEY;
+
+-- Insert dummy data into shop_location table
+INSERT INTO shop_location (location_id, shop_id, country_id)
+VALUES
+    -- UK locations
+    (1, 1, 1),
+    (4, 2, 1),
+    (7, 3, 1),
+    (10, 4, 1),
+    -- US locations
+    (2, 5, 2),
+    (5, 6, 2),
+    (8, 7, 2),
+    (2, 8, 2),
+    -- Canada locations
+    (3, 9, 3),
+    (6, 10, 3),
+    (9, 1, 3);
+    
+    -- Create employee_work_place table
+CREATE TABLE employee_work_place (
+    employee_work_place_id SERIAL PRIMARY KEY,
+    employee_id INT,
+    shop_id INT,
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id)
+);
+
+-- Insert dummy data into employee_work_place table
+INSERT INTO employee_work_place (employee_id, shop_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10);
+  
+-- Create shop_supplier table
+CREATE TABLE shop_supplier (
+    shop_supp_id SERIAL PRIMARY KEY,
+    shop_id INT,
+    supplier_id INT,
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id),
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+);
+
+-- Insert dummy data into shop_supplier table
+INSERT INTO shop_supplier (shop_id, supplier_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4),
+    (5, 5),
+    (6, 6),
+    (7, 7),
+    (8, 8),
+    (9, 9),
+    (10, 10);
+
+
+-- Create shop_currency table
+CREATE TABLE shop_currency (
+    shop_currency_id SERIAL PRIMARY KEY,
+    shop_id INT,
+    currency_id INT,
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id),
+    FOREIGN KEY (currency_id) REFERENCES currency(currency_id)
+);
+
+-- Insert dummy data into shop_currency table
+INSERT INTO shop_currency (shop_id, currency_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 1),
+    (5, 2),
+    (6, 3),
+    (7, 1),
+    (8, 2),
+    (9, 3),
+    (10, 1);
+
+
+-- Create shop_menu_item table
+CREATE TABLE shop_menu_item (
+    shopmenu_id SERIAL PRIMARY KEY,
+    item_id INT,
+    shop_id INT,
+    value DECIMAL,
+    FOREIGN KEY (item_id) REFERENCES menu(item_id),
+    FOREIGN KEY (shop_id) REFERENCES shops(shop_id)
+);
+
+-- Insert dummy data into shop_menu_item table
+INSERT INTO shop_menu_item (item_id, shop_id, value)
+VALUES
+    (1, 1, 2.50),
+    (2, 1, 3.00),
+    (3, 1, 3.50),
+    (4, 1, 2.00),
+    (5, 1, 4.00),
+    (6, 2, 3.00),
+    (7, 2, 3.50),
+    (8, 2, 4.00),
+    (9, 2, 4.50),
+    (10, 2, 3.00),
+    (11, 3, 3.50),
+    (12, 3, 4.00),
+    (13, 3, 4.50),
+    (14, 3, 3.00),
+    (15, 3, 3.50),
+    (16, 4, 4.00),
+    (17, 4, 4.50),
+    (18, 4, 3.00),
+    (19, 4, 3.50),
+    (20, 4, 4.00);
